@@ -1,18 +1,13 @@
 import {
   MoviesInterface,
   Movie,
-  Buttons,
-  Query,
-  Urls,
   Element,
   TypeRequest,
 } from './interfaces/interfaces';
 
 import { getMovies } from './api/api';
 
-const favoriteContainer: Element = document.querySelector(
-  '#favorite-movies'
-);
+const favoriteContainer: Element = document.querySelector('#favorite-movies');
 
 const renderFavoriteMovies = (
   container: Element,
@@ -35,10 +30,10 @@ const renderFavoriteMovies = (
                   ${item.overview}
                   </p>
                   <div class="
-                              d-flex
-                              justify-content-between
-                              align-items-center
-                          ">
+                          d-flex
+                          justify-content-between
+                          align-items-center
+                      ">
                       <small class="text-muted">${item.release_date}</small>
                   </div>
               </div>
@@ -82,14 +77,13 @@ const renderPreview = (
 const renderSectionFavoriteMovies = async (
   arrayID: number[]
 ): Promise<void> => {
+  console.log("worked blyat");
   const arrayMoviesPromises = arrayID.map((item: number) => {
     const url = `/movie/${item}`;
     return getMovies(url, null, TypeRequest.getMovies);
   });
   console.log(arrayMoviesPromises);
-  const arrayMovies = (await Promise.all(
-    arrayMoviesPromises
-  )) as Movie[];
+  const arrayMovies = (await Promise.all(arrayMoviesPromises)) as Movie[];
   console.log(arrayMovies);
   renderFavoriteMovies(favoriteContainer, arrayMovies);
 };

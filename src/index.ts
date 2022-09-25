@@ -93,98 +93,101 @@ const createPage = async (
 };
 
 const setTypeLoadMoreBtn = (typeBtn: Buttons | null, query: Query) => {
-  switch (typeBtn) {
-    case Buttons.popularBtn:
-      return createPage(Urls.popular, null, TypeRequest.pagination);
-    case Buttons.upComingBtn:
-      return createPage(Urls.upComing, null, TypeRequest.pagination);
-    case Buttons.topRatedBtn:
-      return createPage(Urls.topRated, null, TypeRequest.pagination);
-    case Buttons.submitBtn:
-      return createPage(Urls.byName, query, TypeRequest.pagination);
+  if (typeBtn === Buttons.popularBtn) {
+    return createPage(Urls.popular, null, TypeRequest.pagination);
+  }
+  if (typeBtn === Buttons.upComingBtn) {
+    return createPage(Urls.upComing, null, TypeRequest.pagination);
+  }
+  if (typeBtn === Buttons.topRatedBtn) {
+    return createPage(Urls.topRated, null, TypeRequest.pagination);
+  }
+  if (typeBtn === Buttons.submitBtn) {
+    return createPage(Urls.byName, query, TypeRequest.pagination);
   }
 };
-let handlerOnclickLoadMoreBtn = setTypeLoadMoreBtn.bind(
+let handleOnClickLoadMoreBtn = setTypeLoadMoreBtn.bind(
   this,
   Buttons.popularBtn,
   null
 );
 
-const handlerOnClick = (
+const handleOnClick = (
   url: Urls,
   typeReq: TypeRequest,
   typeButton: Buttons,
   query: Query
 ): void => {
-  loadMoreBtn?.removeEventListener('click', handlerOnclickLoadMoreBtn);
-  handlerOnclickLoadMoreBtn = setTypeLoadMoreBtn.bind(this, typeButton, query);
-  loadMoreBtn?.addEventListener('click', handlerOnclickLoadMoreBtn);
+  loadMoreBtn?.removeEventListener('click', handleOnClickLoadMoreBtn);
+  handleOnClickLoadMoreBtn = setTypeLoadMoreBtn.bind(this, typeButton, query);
+  loadMoreBtn?.addEventListener('click', handleOnClickLoadMoreBtn);
   !query ? ((formInput as HTMLInputElement).value = '') : formInput;
   createPage(url, query, typeReq);
 };
 
-const onClickButtons = async (typeButtons: Buttons): Promise<void> => {
-  switch (typeButtons) {
-    case Buttons.topRatedBtn:
-      document
-        .querySelector('#top_rated')
-        ?.addEventListener('click', (): void =>
-          handlerOnClick(
-            Urls.topRated,
-            TypeRequest.getMovies,
-            Buttons.topRatedBtn,
-            null
-          )
-        );
-      break;
-    case Buttons.popularBtn:
-      document
-        .querySelector('#popular')
-        ?.addEventListener('click', (): void =>
-          handlerOnClick(
-            Urls.popular,
-            TypeRequest.getMovies,
-            Buttons.popularBtn,
-            null
-          )
-        );
-      break;
-    case Buttons.upComingBtn:
-      document
-        .querySelector('#upcoming')
-        ?.addEventListener('click', (): void =>
-          handlerOnClick(
-            Urls.upComing,
-            TypeRequest.getMovies,
-            Buttons.upComingBtn,
-            null
-          )
-        );
-      break;
-    case Buttons.submitBtn:
-      formInput?.addEventListener('input', (event): string => {
-        searchForm = (event.target as HTMLInputElement).value;
-        return searchForm;
-      });
-      document
-        .querySelector('#submit')
-        ?.addEventListener('click', (): void =>
-          handlerOnClick(
-            Urls.byName,
-            TypeRequest.getMovies,
-            Buttons.submitBtn,
-            searchForm
-          )
-        );
-      break;
+const onClick = async (typeButtons: Buttons): Promise<void> => {
+  if (typeButtons === Buttons.topRatedBtn) {
+    document
+      .querySelector('#top_rated')
+      ?.addEventListener('click', (): void =>
+        handleOnClick(
+          Urls.topRated,
+          TypeRequest.getMovies,
+          Buttons.topRatedBtn,
+          null
+        )
+      );
+    return;
+  }
+  if (typeButtons === Buttons.popularBtn) {
+    document
+      .querySelector('#popular')
+      ?.addEventListener('click', (): void =>
+        handleOnClick(
+          Urls.popular,
+          TypeRequest.getMovies,
+          Buttons.popularBtn,
+          null
+        )
+      );
+  }
+  if (typeButtons === Buttons.upComingBtn) {
+    document
+      .querySelector('#upcoming')
+      ?.addEventListener('click', (): void =>
+        handleOnClick(
+          Urls.upComing,
+          TypeRequest.getMovies,
+          Buttons.upComingBtn,
+          null
+        )
+      );
+    return;
+  }
+  if (typeButtons === Buttons.submitBtn) {
+    formInput?.addEventListener('input', (event): string => {
+      searchForm = (event.target as HTMLInputElement).value;
+      return searchForm;
+    });
+    document
+      .querySelector('#submit')
+      ?.addEventListener('click', (): void =>
+        handleOnClick(
+          Urls.byName,
+          TypeRequest.getMovies,
+          Buttons.submitBtn,
+          searchForm
+        )
+      );
+    return;
   }
 };
 
 const createDefaultPage = async (): Promise<void> => {
   console.log(get('arrayId'));
-  // if (get('arrayId')) {
-  //   favoriteMovies = [...get('arrayId')];
-  // }
+  if (get('arrayId')) {
+    favoriteMovies = [...get('arrayId')];
+  }
   try {
     const movies = (await getMovies(
       Urls.popular,
@@ -194,7 +197,7 @@ const createDefaultPage = async (): Promise<void> => {
     console.log(movies);
     renderPreview(randomMovieSection, bg_container, movies);
     createPage(Urls.popular, null, TypeRequest.getMovies);
-    loadMoreBtn?.addEventListener('click', handlerOnclickLoadMoreBtn);
+    loadMoreBtn?.addEventListener('click', handleOnClickLoadMoreBtn);
   } catch (error: any) {
     console.log(error);
     renderError(cardsContainer, error.message);
@@ -204,9 +207,9 @@ const createDefaultPage = async (): Promise<void> => {
 export async function render(): Promise<void> {
   // TODO render your app here
   createDefaultPage();
-  // renderSectionFavoriteMovies(get('arrayId'));
-  onClickButtons(Buttons.popularBtn);
-  onClickButtons(Buttons.topRatedBtn);
-  onClickButtons(Buttons.upComingBtn);
-  onClickButtons(Buttons.submitBtn);
+  renderSectionFavoriteMovies(get('arrayId'));
+  onClick(Buttons.popularBtn);
+  onClick(Buttons.topRatedBtn);
+  onClick(Buttons.upComingBtn);
+  onClick(Buttons.submitBtn);
 }
