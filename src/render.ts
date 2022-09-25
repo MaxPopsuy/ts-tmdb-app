@@ -1,9 +1,6 @@
-import {
-  MoviesInterface,
-  Movie,
-  Element,
-  TypeRequest,
-} from './interfaces/interfaces';
+import { Movies, Movie } from './interfaces/interfaces';
+import { Element } from './interfaces/constants';
+import { TypeRequest } from './interfaces/enums';
 
 import { getMovies } from './api/api';
 
@@ -54,7 +51,7 @@ const renderError = (container: Element, errorMessage: string): void => {
 const renderPreview = (
   container: Element,
   bg_container: Element,
-  arrayMovies: MoviesInterface
+  arrayMovies: Movies
 ): void => {
   const randomIndex = Math.round(Math.random() * (19 - 0) + 0);
   const randomMovie = arrayMovies.results[randomIndex];
@@ -77,10 +74,10 @@ const renderPreview = (
 const renderSectionFavoriteMovies = async (
   arrayID: number[]
 ): Promise<void> => {
-  console.log("worked blyat");
+  console.log('worked blyat');
   const arrayMoviesPromises = arrayID.map((item: number) => {
     const url = `/movie/${item}`;
-    return getMovies(url, null, TypeRequest.getMovies);
+    return getMovies(url);
   });
   console.log(arrayMoviesPromises);
   const arrayMovies = (await Promise.all(arrayMoviesPromises)) as Movie[];
@@ -90,7 +87,7 @@ const renderSectionFavoriteMovies = async (
 
 const renderMovies = (
   container: Element,
-  arrayMovies: MoviesInterface,
+  arrayMovies: Movies,
   favoriteMovies: number[]
 ): void => {
   arrayMovies.results.map((item: Movie): void => {

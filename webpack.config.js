@@ -1,5 +1,6 @@
 /* eslint-disable */
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: ['babel-polyfill', './index.ts'],
@@ -41,4 +42,5 @@ module.exports = {
     port: 9090,
   },
   devtool: 'source-map',
+  plugins: [new Dotenv()],
 };

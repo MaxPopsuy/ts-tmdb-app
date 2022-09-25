@@ -1,10 +1,7 @@
-import {
-  MoviesInterface,
-  Query,
-  Urls,
-  Element,
-  TypeRequest,
-} from './interfaces/interfaces';
+import { Movies } from './interfaces/interfaces';
+
+import { Query, Element } from './interfaces/constants';
+import { Urls, TypeRequest, Buttons } from './interfaces/enums';
 import { getMovies, setError } from './api/api';
 import { save, get } from './api/localStorage';
 import {
@@ -13,8 +10,6 @@ import {
   renderMovies,
   renderError,
 } from './render';
-
-import { Buttons } from './interfaces/interfaces';
 
 const cardsContainer: Element = document.querySelector('#film-container');
 const formInput: Element = document.querySelector('#search');
@@ -25,10 +20,7 @@ let searchForm: string;
 let favoriteMovies: number[] = [];
 let likeButtons: Node[];
 
-const createSectionMovies = (
-  container: Element,
-  arrayMovies: MoviesInterface
-): void => {
+const createSectionMovies = (container: Element, arrayMovies: Movies): void => {
   if (get('arrayId')) {
     favoriteMovies = [...get('arrayId')];
   }
@@ -64,31 +56,24 @@ const createPage = async (
   query: Query,
   typeRender: TypeRequest
 ): Promise<void> => {
-  let Movies: MoviesInterface;
+  let Movies: Movies;
+  console.log(query);
   try {
     switch (typeRender) {
       case TypeRequest.getMovies:
-        Movies = (await getMovies(
-          url,
-          query,
-          TypeRequest.getMovies
-        )) as MoviesInterface;
-        if ((Movies as MoviesInterface)?.results.length === 0) {
+        Movies = (await getMovies(url, query)) as Movies;
+        if ((Movies as Movies)?.results.length === 0) {
           setError('Oops, Not found 404 :(');
         }
         cardsContainer ? (cardsContainer.innerHTML = '') : null;
         return createSectionMovies(cardsContainer, Movies);
       case TypeRequest.pagination:
-        Movies = (await getMovies(
-          url,
-          query,
-          TypeRequest.pagination
-        )) as MoviesInterface;
+        Movies = (await getMovies(url)) as Movies;
         return createSectionMovies(cardsContainer, Movies);
     }
-  } catch (error: any) {
+  } catch (error) {
     console.log(error);
-    renderError(cardsContainer, error.message);
+    error instanceof Error && setError(error.message);
   }
 };
 
@@ -191,9 +176,7 @@ const createDefaultPage = async (): Promise<void> => {
   try {
     const movies = (await getMovies(
       Urls.popular,
-      null,
-      TypeRequest.getMovies
-    )) as MoviesInterface;
+    )) as Movies;
     console.log(movies);
     renderPreview(randomMovieSection, bg_container, movies);
     createPage(Urls.popular, null, TypeRequest.getMovies);
